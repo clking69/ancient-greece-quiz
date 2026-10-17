@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ancient Greece Quiz</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #edf2f7;
+  text-align: center;
+  padding: 30px 15px;
+  color: #23334a;
+}
+.quiz {
+  max-width: 600px;
+  margin: 30px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 5px 20px #0002;
+}
+h1 { color: #245b8f; }
+button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0;
+  background: #e3eef9;
+  border: 2px solid #b7cde1;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 17px;
+}
+button:hover { background: #c7e1fa; }
+button:disabled { cursor: default; }
+.correct { background: #b9ebc5 !important; }
+.wrong { background: #ffd0d0 !important; }
+#next { background: #245b8f; color: white; }
+#feedback { font-weight: bold; min-height: 25px; }
+</style>
+</head>
+<body>
+
+<div class="quiz">
+  <h1>🏛️ Ancient Greece Quiz</h1>
+  <p id="progress"></p>
+  <h2 id="question"></h2>
+  <div id="answers"></div>
+  <p id="feedback" aria-live="polite"></p>
+  <button id="next" hidden>Next Question →</button>
+</div>
+
+<script>
+const questions = [
+  {
+    question: "Which city-state was famous for its democracy?",
+    answers: ["Sparta", "Athens", "Corinth", "Thebes"],
+    correct: 1
+  },
+  {
+    question: "Who was the Greek goddess of wisdom?",
+    answers: ["Hera", "Aphrodite", "Athena", "Artemis"],
+    correct: 2
+  },
+  {
+    question: "Where were the ancient Olympic Games held?",
+    answers: ["Athens", "Delphi", "Sparta", "Olympia"],
+    correct: 3
+  }
+];
+
+let current = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const feedbackEl = document.getElementById("feedback");
+const nextBtn = document.getElementById("next");
+const progressEl = document.getElementById("progress");
+
+function showQuestion() {
+  const q = questions[current];
+  progressEl.textContent = `Question ${current + 1} of ${questions.length}`;
+  questionEl.textContent = q.question;
+  answersEl.innerHTML = "";
+  feedbackEl.textContent = "";
+  nextBtn.hidden = true;
+
+  q.answers.forEach((answer, index) => {
+    const button = document.createElement("button");
+    button.textContent = answer;
+    button.onclick = () => {
+      const buttons = answersEl.querySelectorAll("button");
+      buttons.forEach(b => b.disabled = true);
+
+      if (index === q.correct) {
+        score++;
+        button.classList.add("correct");
+        feedbackEl.textContent = "✓ Correct! Well done!";
+      } else {
+        button.classList.add("wrong");
+        buttons[q.correct].classList.add("correct");
+        feedbackEl.textContent = "Not quite! The green answer is correct.";
+      }
+      nextBtn.textContent =
+        current === questions.length - 1 ? "See My Score" : "Next Question →";
+      nextBtn.hidden = false;
+    };
+    answersEl.appendChild(button);
+  });
+}
+
+nextBtn.onclick = () => {
+  current++;
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    progressEl.textContent = "Quiz Complete";
+    questionEl.textContent = `Your score: ${score} / ${questions.length}`;
+    answersEl.innerHTML = "";
+    feedbackEl.textContent = "Great effort!";
+    nextBtn.textContent = "Play Again";
+    nextBtn.hidden = false;
+    nextBtn.onclick = () => location.reload();
+  }
+};
+
+showQuestion();
+</script>
+</body>
+</html>
